@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Uptime Monitor</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Uptime Monitor</h1>
+      <div id="error-message" style="color: var(--error-color); text-align: center"></div>
+      <div id="statusGrid" class="status-grid"></div>
+    </div>
+
+    <script>
+      async function fetchStatusData() {
+        try {
+          const response = await fetch("/api/status");
+          const data = await response.json();
+
+          if (data.error) {
+            displayError(data.error);
+            return;
+          }
+
+          updateStatusCards(data.results);
+        } catch (error) {
+          displayError("Failed to fetch the status data.");
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      function updateStatusCards(services) {
+        const grid = document.getElementById("statusGrid");
+        const existingCards = grid.querySelectorAll(".status-card");
+
+        services.forEach((service, index) => {
+          let card = existingCards[index];
+
+          if (!card) {
+            card = document.createElement("div");
+            card.className = `status-card ${service.status === "Operational" ? "status-up" : "status-down"}`;
+            grid.appendChild(card);
+          }
+
+          card.innerHTML = `
+                    <h2><span class="status-indicator"></span>${service.name}</h2>
+                    <p>Status: ${service.status}</p>
+                    <p class="uptime">Uptime: ${service.uptime}%</p>
+                    <div class="dot-container">
+                        ${renderUptimeDots(service.uptimes)}
+                    </div>
+                `;
+        });
+      }
+
+      function renderUptimeDots(uptimes) {
+        return uptimes
+          .map((uptime) => {
+            const dotClass = uptime >= 95 ? "up" : uptime >= 70 ? "warning" : "down";
+            return `<div class="dot ${dotClass}"></div>`;
+          })
+          .join("");
+      }
+
+      function displayError(message) {
+        const errorDiv = document.getElementById("error-message");
+        errorDiv.textContent = message;
+      }
+
+      window.onload = function () {
+        fetchStatusData();
+
+        setInterval(fetchStatusData, 1000);
+      };
+    </script>
+  </body>
+  <style>
+    :root {
+      --bg-color: #1a1a1a;
+      --text-color: #ffffff;
+      --card-bg: #2a2a2a;
+      --accent-color: #4caf50;
+      --error-color: #f44336;
+      --warning-color: #ff9800;
+      --skeleton-color: #444;
+    }
+
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .status-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .status-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .status-card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-up .status-indicator {
+      background-color: var(--accent-color);
+    }
+
+    .status-down .status-indicator {
+      background-color: var(--error-color);
+    }
+
+    .status-warning .status-indicator {
+      background-color: var(--warning-color);
+    }
+
+    .uptime {
+      font-size: 0.9em;
+      color: #888;
+      margin-top: 10px;
+    }
+
+    .dot-container {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #ccc;
+    }
+
+    .dot.up {
+      background-color: var(--accent-color);
+    }
+
+    .dot.down {
+      background-color: var(--error-color);
+    }
+
+    .dot.warning {
+      background-color: var(--warning-color);
+    }
+
+    .skeleton-card {
+      background-color: var(--skeleton-color);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    .skeleton-line {
+      height: 12px;
+      background-color: var(--card-bg);
+      margin-bottom: 10px;
+      border-radius: 4px;
+      width: 80%;
+    }
+
+    .skeleton-line.short {
+      width: 40%;
+    }
+
+    .skeleton-title {
+      width: 60%;
+      height: 20px;
+      background-color: var(--card-bg);
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+
+    .skeleton-status {
+      width: 30%;
+      height: 15px;
+      background-color: var(--card-bg);
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .skeleton-uptime {
+      width: 50%;
+      height: 10px;
+      background-color: var(--card-bg);
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .skeleton-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .skeleton-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--card-bg);
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.6;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</html>

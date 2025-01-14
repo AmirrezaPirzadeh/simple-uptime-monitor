@@ -2,20 +2,6 @@
     "urls": [
         { "name": "VM-C", "url": "https://c.noiseict.net:8443/" },
         { "name": "VM-R-[1]", "url": "https://server.hiddenshops.xyz:9443/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
-        { "name": "Example", "url": "https://www.google.com/" },
         { "name": "Example", "url": "https://www.google.com/" }
 
 

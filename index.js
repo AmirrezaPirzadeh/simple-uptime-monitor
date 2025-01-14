@@ -3,7 +3,7 @@ const axios = require("axios");
 const fs = require("fs").promises;
 
 const app = express();
-const PORT = 3000;
+const PORT = 2999;
 
 app.set("view engine", "ejs");
 
@@ -23,6 +23,7 @@ const readDestinations = async () => {
 };
 
 let urlStatus = {};
+
 
 const updateUptime = async () => {
   const destinations = await readDestinations();

@@ -1,6 +1,5 @@
 const express = require("express");
 const axios = require("axios");
-const fs = require("fs").promises;
 
 const app = express();
 const PORT = 3000;
@@ -12,23 +11,20 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 
-const readDestinations = async () => {
-  try {
-    const data = await fs.readFile("urls.json", "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading urls.json:", error);
-    return { urls: [] };
-  }
+// Predefined list of URLs
+const destinations = {
+  urls: [
+    { name: "Google", url: "https://www.google.com" },
+    { name: "GitHub", url: "https://www.github.com" },
+    { name: "Node.js", url: "https://nodejs.org" }
+  ]
 };
 
 let urlStatus = {};
 
 const updateUptime = async () => {
-  const destinations = await readDestinations();
-
   if (!destinations.urls || destinations.urls.length === 0) {
-    console.error("No URLs found in urls.json.");
+    console.error("No URLs found.");
     return;
   }
 
@@ -80,10 +76,8 @@ app.get("/", (req, res) => {
 // API route to check status
 app.get("/api/status", async (req, res) => {
   try {
-    const destinations = await readDestinations();
-
     if (!destinations.urls || destinations.urls.length === 0) {
-      return res.status(404).json({ error: "No URLs found in urls.json." });
+      return res.status(404).json({ error: "No URLs found." });
     }
 
     const results = destinations.urls.map(({ name, url }) => ({
@@ -96,8 +90,8 @@ app.get("/api/status", async (req, res) => {
 
     res.json({ results });
   } catch (error) {
-    console.error("Error reading urls.json:", error);
-    res.status(500).json({ error: "Failed to read urls.json or invalid file format." });
+    console.error("Error checking URL status:", error);
+    res.status(500).json({ error: "Failed to check URL status." });
   }
 });
 

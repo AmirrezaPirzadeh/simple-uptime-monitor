@@ -24,7 +24,6 @@ const readDestinations = async () => {
 
 let urlStatus = {};
 
-
 const updateUptime = async () => {
   const destinations = await readDestinations();
 
@@ -78,6 +77,7 @@ app.get("/", (req, res) => {
   res.redirect("https://google.com");
 });
 
+// API route to check status
 app.get("/api/status", async (req, res) => {
   try {
     const destinations = await readDestinations();
@@ -99,6 +99,11 @@ app.get("/api/status", async (req, res) => {
     console.error("Error reading urls.json:", error);
     res.status(500).json({ error: "Failed to read urls.json or invalid file format." });
   }
+});
+
+// Catch-all route handler for all other routes
+app.all("*", (req, res) => {
+  res.status(404).json({ error: "Route not found." });
 });
 
 app.listen(PORT, () => {

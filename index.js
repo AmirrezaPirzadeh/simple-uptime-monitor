@@ -75,7 +75,7 @@ updateUptime().then(() => {
 setInterval(updateUptime, 2 * 1000);
 
 app.get("/", (req, res) => {
-  res.render("main");
+  res.redirect("https://google.com");
 });
 
 app.get("/api/status", async (req, res) => {

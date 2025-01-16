@@ -70,7 +70,7 @@ updateUptime().then(() => {
 setInterval(updateUptime, 2 * 1000);
 
 app.get("/", (req, res) => {
-  res.redirect("https://google.com");
+  res.render("main");
 });
 
 // API route to check status
